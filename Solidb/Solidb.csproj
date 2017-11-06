@@ -1,7 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.7.0</Version>
+    <AssemblyVersion>0.7.0.0</AssemblyVersion>
+    <Description>Solidb is a Dynamic .NET micro ORM with change tracking observable objects.</Description>
+    <PackageProjectUrl>https://github.com/SperoSophia/Solidb</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/SperoSophia/Solidb</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
