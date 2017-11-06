@@ -1,6 +1,14 @@
 # Solidb
 Solidb is a Dynamic .NET micro ORM with change tracking observable objects.
 
+# Installation
+
+From Nuget.Org
+
+```cs
+PM> Install-Package Solidb
+```
+
 # How
 
 Solidbase is a List just like how List<object> is used. you can take and create a new Solidbase list
