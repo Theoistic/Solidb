@@ -42,7 +42,7 @@ namespace Solidb
         private IDbConnection Connection { get { return Strategy(); } } // utility to create a connection based on connection string that was instasiated or backup
         private new void Remove(dynamic obj) => ExecuteQuery($"DELETE FROM {_name} WHERE Id = {GetID(obj)}"); // remove from db based on ID 
         public int NextId { get { return this.Count == 0 ? 0 : (int)(this.OrderByDescending(x => x.Id).First().Id + 1); } } // get the next integer ID available
-        private void CreateTable() => ExecuteQuery($"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='{_name}' AND xtype='U') CREATE TABLE {_name} (Id INT UNIQUE, Data VARCHAR(MAX))"); // create table incase it doesnt exist
+        private void CreateTable() => ExecuteQuery($"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='{_name}' AND xtype='U') CREATE TABLE [{_name}] (Id INT UNIQUE, Data VARCHAR(MAX))"); // create table incase it doesnt exist
         private void AttachListener(dynamic obj) => ((INotifyPropertyChanged)obj).PropertyChanged += new PropertyChangedEventHandler((sender, e) => { SaveChanges(new[] { sender }); }); // attach the listener for change tracking
 
         // A handy reusable snippet.

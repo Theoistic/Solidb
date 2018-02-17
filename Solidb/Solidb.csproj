@@ -3,12 +3,13 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.7.0</Version>
-    <AssemblyVersion>0.7.0.0</AssemblyVersion>
+    <Version>0.8.0</Version>
+    <AssemblyVersion>0.8.0.0</AssemblyVersion>
     <Description>Solidb is a Dynamic .NET micro ORM with change tracking observable objects.</Description>
     <PackageProjectUrl>https://github.com/SperoSophia/Solidb</PackageProjectUrl>
     <RepositoryUrl>https://github.com/SperoSophia/Solidb</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
+    <FileVersion>0.8.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
