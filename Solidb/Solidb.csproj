@@ -13,14 +13,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Massive\**" />
-    <EmbeddedResource Remove="Massive\**" />
-    <None Remove="Massive\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.4.2" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
+    <PackageReference Include="System.Dynamic.Runtime" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>
