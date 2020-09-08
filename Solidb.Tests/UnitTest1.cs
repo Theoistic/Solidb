@@ -27,20 +27,25 @@ namespace Solidb.Tests
         [TestInitialize]
         public void Init()
         {
-            Solidbase.Strategy = () => new SqlConnection("Server=.\\SQLEXPRESS;Database=NewSolidb;Trusted_Connection=True;");
+            //Solidbase.Strategy = () => new SqlConnection("Server=.\\SQLEXPRESS;Database=NewSolidb;Trusted_Connection=True;");
         }
 
         [TestMethod]
         public void Test1()
         {
             Solidbase list = new Solidbase("Random");
-            list.Add(new { Id = 1, anotherValue = "awesome" });
+            list.Add(new { count = 1 });
+            /*for (int i = 0; i<100; i++)
+            {
+                list.Add(new { count = i });
+            }*/
+            /*list.Add(new { Id = 1, anotherValue = "awesome" });
             var e = list.First();
             e.something = "lol";
             var g = list.FirstOrDefault(x => x.something == "lol");
             Assert.IsTrue(g != null);
             list.Add(new { Id = 40, epic = true });
-            list.Remove(list.First());
+            list.Remove(list.First());*/
         }
 
         [TestMethod]
@@ -63,7 +68,7 @@ namespace Solidb.Tests
         public void Test4()
         {
             Solidbase list = new Solidbase("Random");
-            list.Add(new { Id = list.NextId, content = "rainbow" });
+            //list.Add(new { Id = list.NextId, content = "rainbow" });
             var latest = list.Last();
             latest.newStuff = "something else";
         }
@@ -72,7 +77,7 @@ namespace Solidb.Tests
         public void Test5()
         {
             Solidbase list = new Solidbase<Product>();
-            list.Add(new Product { Id = list.NextId, Name = "Something", Price = 520.4 });
+            //list.Add(new Product { Id = list.NextId, Name = "Something", Price = 520.4 });
             var storedProduct = list.First(x => x.Name == "Something");
             Assert.IsNotNull(storedProduct);
         }
@@ -84,7 +89,7 @@ namespace Solidb.Tests
                 Solidbase list = new Solidbase<Product>();
                 for (int i = 0; i < 1000; i++)
                 {
-                    list.Add(new Product { Id = list.NextId, Name = "Something", Price = i });
+                    list.Add(new Product { Name = "Something", Price = i });
                 }
                 Assert.IsTrue(list.Count > 999);
             });
@@ -106,7 +111,7 @@ namespace Solidb.Tests
         public static void ReportBenchmark(string name, double duration)
         {
             Solidbase list = new Solidbase<Benchmark>();
-            list.Add(new Benchmark { Id = list.NextId, Name = name, Duration = duration });
+            //list.Add(new Benchmark { Id = list.NextId, Name = name, Duration = duration });
         }
     }
 }
