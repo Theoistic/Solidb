@@ -8,7 +8,6 @@ namespace Solidb.Tests
 {
     public class Product 
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public double Price { get; set; }
     }
@@ -33,12 +32,14 @@ namespace Solidb.Tests
         [TestMethod]
         public void Test1()
         {
-            Solidbase list = new Solidbase("Random");
-            list.Add(new { count = 1 });
-            /*for (int i = 0; i<100; i++)
+            using (Solidbase list = new Solidbase("Random"))
             {
-                list.Add(new { count = i });
-            }*/
+                //list.Add(new { count = 1 });
+                for (int i = 0; i < 8; i++)
+                {
+                    list.Add(new { count = i });
+                }
+            }
             /*list.Add(new { Id = 1, anotherValue = "awesome" });
             var e = list.First();
             e.something = "lol";
@@ -76,9 +77,9 @@ namespace Solidb.Tests
         [TestMethod]
         public void Test5()
         {
-            Solidbase list = new Solidbase<Product>();
-            //list.Add(new Product { Id = list.NextId, Name = "Something", Price = 520.4 });
-            var storedProduct = list.First(x => x.Name == "Something");
+            Solidbase<Product> list = new Solidbase<Product>();
+            list.Add(new Product { Name = "Something", Price = 520.4 });
+            var storedProduct = list.Last(x => x.Name == "Something");
             Assert.IsNotNull(storedProduct);
         }
 
