@@ -27,11 +27,11 @@ namespace Solidb
         internal Dictionary<string, Dictionary<string, Func<dynamic, string>>> Queries => new Dictionary<string, Dictionary<string, Func<dynamic, string>>>
         {
             { "SQLServer", new Dictionary<string, Func<dynamic, string>> {
-                { "REMOVE", (x) => { return $"DELETE FROM [{_name}] WHERE Id = {GetID(x)}"; } },
-                { "CREATE", (x) => { return $"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='{_name}' AND xtype='U') CREATE TABLE [{_name}] (Id INT UNIQUE, Data VARCHAR(MAX))"; } },
-                { "INSERT", (x) => { return $"DECLARE @id INT = {GetID(x)}, @data VARCHAR(MAX) = '{JsonConvert.SerializeObject(x, Formatting.None)}' IF EXISTS(SELECT Id FROM [{_name}] WHERE Id = @id) BEGIN UPDATE [{_name}] SET Data = @data WHERE Id = @id END ELSE BEGIN INSERT INTO [{_name}] (Id, Data) VALUES(@id, @data) END"; } },
+                { "REMOVE", (x) => { return $"DELETE FROM [{_name}] WHERE Id = '{GetID(x)}'"; } },
+                { "CREATE", (x) => { return $"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='{_name}' AND xtype='U') CREATE TABLE [{_name}] (Id UNIQUEIDENTIFIER UNIQUE, Data VARCHAR(MAX))"; } },
+                { "INSERT", (x) => { return $"DECLARE @id UNIQUEIDENTIFIER = '{GetID(x)}', @data VARCHAR(MAX) = '{JsonConvert.SerializeObject(x, Formatting.None)}' IF EXISTS(SELECT Id FROM [{_name}] WHERE Id = @id) BEGIN UPDATE [{_name}] SET Data = @data WHERE Id = @id END ELSE BEGIN INSERT INTO [{_name}] (Id, Data) VALUES(@id, @data) END"; } },
                 { "SELECT", (x) => { return $"SELECT * from [{_name}]"; } },
-                { "RESYNC", (x) => { return $"SELECT Data from [{_name}] WHERE Id = {x}"; } }
+                { "RESYNC", (x) => { return $"SELECT Data from [{_name}] WHERE Id = '{x}'"; } }
             }},
             { "SQLite", new Dictionary<string, Func<dynamic, string>> {
                 { "REMOVE", (x) => { return $"DELETE FROM [{_name}] WHERE Id = '{GetID(x)}'"; } },
@@ -71,20 +71,25 @@ namespace Solidb
         private IDbConnection _Connection { get; set; }
         private IDbConnection Connection { 
             get {
-                if (_Connection == null || (_Connection.State == ConnectionState.Closed || _Connection.State == ConnectionState.Broken)) {
+                /*if (_Connection == null || (_Connection.State == ConnectionState.Closed || _Connection.State == ConnectionState.Broken)) {
                     _Connection = Strategy != null ? Strategy() : new SQLiteConnection("Data Source=Solid.base");
                     _Connection.Open();
-                }
+                }*/
+                _Connection = Strategy != null ? Strategy() : new SQLiteConnection("Data Source=Solid.base");
+                _Connection.Open();
                 return _Connection;
             } 
         } // utility to create a connection based on connection string that was instasiated or backup
 
         private void ExecuteQuery(string query)
         {
-            using (IDbCommand cmd = Connection.CreateCommand())
+            using (var conn = Connection)
             {
-                cmd.CommandText = query;
-                cmd.ExecuteNonQuery();
+                using (IDbCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = query;
+                    cmd.ExecuteNonQuery();
+                }
             }
         }
 
@@ -93,18 +98,21 @@ namespace Solidb
         {
             IsSyncing = true;
             Clear();
-            using (IDbCommand cmd = Connection.CreateCommand())
+            using (var conn = Connection)
             {
-                cmd.CommandText = ResolveQuery("SELECT", null);
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (IDbCommand cmd = conn.CreateCommand())
                 {
-                    Guid id = reader.GetGuid(0);
-                    string str = reader.GetString(1);
-                    dynamic theObject = JsonConvert.DeserializeObject(str);
-                    theObject.Id = id; // Resync the Id of the row.
-                    AttachListener(theObject);
-                    this.Add(theObject);
+                    cmd.CommandText = ResolveQuery("SELECT", null);
+                    var reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        Guid id = reader.GetGuid(0);
+                        string str = reader.GetString(1);
+                        dynamic theObject = JsonConvert.DeserializeObject(str);
+                        theObject.Id = id; // Resync the Id of the row.
+                        AttachListener(theObject);
+                        this.Add(theObject);
+                    }
                 }
             }
             IsSyncing = false;

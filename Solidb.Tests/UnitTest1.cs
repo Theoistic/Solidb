@@ -26,7 +26,7 @@ namespace Solidb.Tests
         [TestInitialize]
         public void Init()
         {
-            //Solidbase.Strategy = () => new SqlConnection("Server=.\\SQLEXPRESS;Database=NewSolidb;Trusted_Connection=True;");
+            Solidbase.Strategy = () => new SqlConnection("");
         }
 
         [TestMethod]
