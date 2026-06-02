@@ -30,7 +30,6 @@ namespace Solidb.Tests
         public string Title { get; set; } = "";
 
         [ForeignKey(nameof(UserId))]
-        [NotMapped]
         public User? User { get; set; }
     }
 

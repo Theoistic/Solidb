@@ -69,7 +69,7 @@ namespace Solidb.Schema
                 if (underlying == typeof(double) || underlying == typeof(float)) return "FLOAT";
                 if (underlying == typeof(decimal)) return "DECIMAL(18,2)";
                 if (underlying == typeof(DateTime)) return "DATETIME2";
-                if (underlying == typeof(Guid)) return isKey ? "UNIQUEIDENTIFIER" : "UNIQUEIDENTIFIER";
+                if (underlying == typeof(Guid)) return "UNIQUEIDENTIFIER";
                 if (underlying == typeof(byte[])) return "VARBINARY(MAX)";
                 if (underlying == typeof(string)) return "NVARCHAR(MAX)";
                 if (underlying.IsEnum) return "INT";

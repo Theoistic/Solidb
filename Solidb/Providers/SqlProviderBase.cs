@@ -217,8 +217,13 @@ namespace Solidb.Providers
             var paramName = state.NextParam();
             state.Parameters[paramName] = NormalizeId(id);
 
-            var sql = $"SELECT {string.Join(", ", map.Properties.Select(p => p.ColumnName))} " +
-                      $"FROM {map.TableName} WHERE {map.Key.ColumnName} = @{paramName} LIMIT 1";
+            var cols = string.Join(", ", map.Properties.Select(p => p.ColumnName));
+            var limitClause = _dialect == SqlDialect.SQLite
+                ? $"WHERE {map.Key.ColumnName} = @{paramName} LIMIT 1"
+                : $"WHERE {map.Key.ColumnName} = @{paramName}";
+            var selectTop = _dialect == SqlDialect.SqlServer ? "TOP 1 " : "";
+
+            var sql = $"SELECT {selectTop}{cols} FROM {map.TableName} {limitClause}";
 
             _logger?.Log(new SolidCommandLog(sql, state.Parameters));
 
@@ -343,10 +348,12 @@ namespace Solidb.Providers
         public async Task<bool> TableExistsAsync(string tableName)
         {
             await EnsureOpenAsync();
+            var safeTableName = tableName.Replace("'", "''");
             var sql = _dialect == SqlDialect.SQLite
-                ? $"SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='{tableName}'"
-                : $"SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME='{tableName}'";
-            await using var cmd = CreateCommand(sql, new Dictionary<string, object?>());
+                ? "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name=@tableName"
+                : "SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME=@tableName";
+            var parameters = new Dictionary<string, object?> { ["tableName"] = safeTableName };
+            await using var cmd = CreateCommand(sql, parameters);
             var result = await cmd.ExecuteScalarAsync();
             return Convert.ToInt32(result) > 0;
         }
